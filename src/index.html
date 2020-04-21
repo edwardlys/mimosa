@@ -1,0 +1,71 @@
+<html>
+
+<head>
+    <script src="https://unpkg.com/peerjs@1.2.0/dist/peerjs.min.js"></script>
+</head>
+
+<body>
+    <div>
+        <label>
+            ID:
+        </label>
+        <input type="text" id="id" readonly>
+    </div>
+
+    <div>
+        <label>
+            Peer ID:
+        </label>
+        <input type="text" id="peer-id">
+        <button id="connect">Connect</button>
+    </div>
+
+    <div>
+        <label>
+            Message:
+        </label>
+        <br>
+        <textarea id="message"></textarea> <br>
+        <button id="send">Send</button> <br>
+    </div>
+    <br><br>
+    <div>
+        <label>Messages</label><br>
+        <div id="messages"></div>        
+    </div>
+    <script>
+        // var peer = new Peer({ host: '128.199.217.90', port: 9000, debug: 3, path: '/myapp'});
+        var peer = new Peer({ host: 'localhost', port: 9000, debug: 3, path: '/myapp'});
+        var conn = null;
+
+        peer.on('open', function(id) {
+            document.getElementById('id').value = id;
+        });
+    
+        document.getElementById('connect').addEventListener('click', function () {
+            var peerID = document.getElementById('peer-id').value;
+            conn = peer.connect(peerID);
+
+            peer.on('connection', function(conn) { 
+                conn.on('open', function() {
+                    conn.on('data', function(data) {
+                        console.log('Received', data);
+                        document.getElementById('messages').innerHTML += "him: " + data.strings + "<br>";
+                    });
+
+                    
+                });
+            });
+        });
+
+        document.getElementById('send').addEventListener('click', function () {
+            var message = document.getElementById('message').value;
+            document.getElementById('messages').innerHTML += "you: " + message + "<br>";
+            conn.send({strings: message});
+        });
+
+    </script>
+</body>
+
+
+</html>

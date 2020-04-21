@@ -1,0 +1,13 @@
+version: '3.7'
+
+services:
+    server:
+        image: peerjs/peerjs-server
+        ports:
+            - 9000:9000
+    client:
+        image: nginx:alpine
+        volumes:
+            - ./src:/usr/share/nginx/html
+        ports:
+            - 9010:80
