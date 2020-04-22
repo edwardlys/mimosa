@@ -6,8 +6,9 @@ services:
         ports:
             - 9000:9000
     client:
-        image: nginx:alpine
+        build:
+            context: .
         volumes:
-            - ./src:/usr/share/nginx/html
+            - ./client:/app
         ports:
-            - 9010:80
+            - 9010:8080
