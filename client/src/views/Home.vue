@@ -1,18 +1,26 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
+import Peer from 'peerjs'
 
 export default {
   name: 'Home',
-  components: {
-    HelloWorld
+  created () {
+    window.peer = new Peer({ host: 'localhost', port: 9000, path: '/myapp'})
+
+    window.peer.on('open', this.onPeerOpen)
+    window.peer.on('connection', this.onPeerConn)
+  },
+  methods: {
+    onPeerOpen (id) {
+      console.log('connection ID:', id)
+    },
+    onPeerConn (conn) {
+      console.log(conn)
+    }
   }
 }
 </script>
