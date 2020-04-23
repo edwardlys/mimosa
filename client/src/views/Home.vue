@@ -17,7 +17,7 @@
             <div class="card-body">
               <form class="container">
                 <div class="row">
-                  <div class="col form-group">
+                  <div class="col-md form-group">
                     <div class="input-group mb-3">
                       <input type="text" class="form-control" id="uuid" v-model="UUID" readonly>
                       <div class="input-group-append">
@@ -26,20 +26,16 @@
                     </div>
                   </div>
 
-                  <div class="col form-group">
-                    <div class="input-group mb-3">
-                      <input type="text" class="form-control" id="peer-uuid" v-model="peerUUID">
-                      <div class="input-group-append">
-                        <button class="btn btn-outline-secondary" type="button" v-on:click="pasteUUID">Paste</button>
-                      </div>
-                    </div>
+                  <div class="col-md form-group">
+                      <input type="text" placeholder="Peer ID" class="form-control" id="peer-uuid" v-model="peerUUID" :disabled="lockPeer">
                   </div>
                 </div>
-                <div class="row">
-                  <button type="button" class="col btn btn-primary" :disabled="!peerUUID" v-on:click="connectPeer">Connect</button>
+                <div class="row" v-if="!lockPeer">
+                  <button type="button" class="col btn btn-primary" :disabled="!peerUUID || lockPeer" v-on:click="connectPeer">Connect</button>
                 </div>
                 <div class="row">
                   <div class="col">
+                    <h1 style="color: green" v-if="lockPeer">Connected!</h1>
                   </div>
                 </div>
               </form>
@@ -81,7 +77,8 @@ export default {
       peerUUID: null,
       conn: null,
       connectionStatus: 0,
-      message: ''
+      message: '',
+      lockPeer: false
     }
   },
   created () {
@@ -120,6 +117,7 @@ export default {
     },
     onConnOpen () {
       this.conn.send({secretUUID: this.UUID})
+      this.lockPeer = true
     },
     sendMessage () {
       this.conn.send({string: this.message})
@@ -128,8 +126,10 @@ export default {
     onConnReceiveData (data) {
       if ('secretUUID' in data) {
         this.peerUUID = data.secretUUID
+        this.lockPeer = true
+      } else {
+        alert(data.string)
       }
-      console.log(data)
     }
   }
 }
