@@ -1,13 +1,5 @@
 <template>
   <div>
-    <div>
-      <nav class="navbar navbar-dark bg-dark">
-        <a class="navbar-brand" href="#">
-          <img src="favicon.ico" width="30" height="30" alt="">
-        </a>
-      </nav>
-    </div>
-
     <br>
 
     <div class="container-lg">
@@ -60,6 +52,26 @@
               </form>
             </div>
           </div>
+
+          <div class="card">
+            <div class="card-body">
+              <form class="container">
+                <div class="row">
+                  <div class="col form-group">
+                    <div class="input-group mb-3">
+                      <div>
+                        <div id="video-canvas" width="320" height="240">
+                        </div>
+                      </div>
+                      <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="button" v-on:click="callMedia" :disabled="!conn">Send</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -82,10 +94,33 @@ export default {
     }
   },
   created () {
-    window.peer = new Peer({ host: 'localhost', port: 9000, debug: 3, path: '/myapp'})
+    window.peer = new Peer({
+      host: process.env.VUE_APP_PEER_SERVER_HOST, 
+      port: process.env.VUE_APP_PEER_SERVER_PORT, 
+      debug: 3, 
+      path: process.env.VUE_APP_PEER_SERVER_PATH
+    })
 
     window.peer.on('open', this.onPeerOpen)
     window.peer.on('connection', this.onPeerConn)
+
+    var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+    
+    window.peer.on('call', function(call) {
+      getUserMedia({video: true, audio: true}, function(stream) {
+        call.answer(stream); // Answer the call with an A/V stream.
+        call.on('stream', function(remoteStream) {
+          let videoCanvas = document.getElementById('video-canvas');
+
+          let video = document.createElement('video');
+          video.srcObject = remoteStream;
+          video.play();
+          videoCanvas.appendChild(video)
+        });
+      }, function(err) {
+        console.log('Failed to get local stream' ,err);
+      });
+    });
   },
   methods: {
     onPeerOpen (id) {
@@ -130,6 +165,23 @@ export default {
       } else {
         alert(data.string)
       }
+    },
+    callMedia () {
+      let self = this
+      var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+      // let urlObject = window.URL;
+      getUserMedia({video: true, audio: true}, function(stream) {
+        window.peer.call(self.peerUUID, stream);
+        // call.on('stream', function(remoteStream) {
+        //   let video = document.getElementById('video');
+        //   console.log('test');
+        //   console.log(urlObject);
+        //     video.src = urlObject.createObjectURL(remoteStream);
+        //   video.play();
+        // });
+      }, function(err) {
+        console.log('Failed to get local stream' ,err);
+      });
     }
   }
 }
