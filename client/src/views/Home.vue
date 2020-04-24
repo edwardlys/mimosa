@@ -90,16 +90,27 @@ export default {
       conn: null,
       connectionStatus: 0,
       message: '',
-      lockPeer: false
+      lockPeer: false,
+      peerConf: {}
     }
   },
   created () {
-    window.peer = new Peer({
-      host: process.env.VUE_APP_PEER_SERVER_HOST, 
-      port: process.env.VUE_APP_PEER_SERVER_PORT, 
-      debug: 3, 
-      path: process.env.VUE_APP_PEER_SERVER_PATH
-    })
+    if (process.env.NODE_ENV === 'production') {
+      console.log('prod');
+      this.peerConf = {
+        host: process.env.VUE_APP_PEER_SERVER_HOST, 
+        path: process.env.VUE_APP_PEER_SERVER_PATH
+      }
+    } else if (process.env.NODE_ENV === 'development') {
+      this.peerConf = {
+        host: process.env.VUE_APP_PEER_SERVER_HOST, 
+        port: process.env.VUE_APP_PEER_SERVER_PORT, 
+        debug: 3, 
+        path: process.env.VUE_APP_PEER_SERVER_PATH
+      }
+    }
+
+    window.peer = new Peer()
 
     window.peer.on('open', this.onPeerOpen)
     window.peer.on('connection', this.onPeerConn)
