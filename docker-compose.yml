@@ -5,12 +5,12 @@ services:
     #     image: peerjs/peerjs-server
     #     ports:
     #         - 9000:9000
-    client:
+    app:
         build:
             context: .
         working_dir: /app
         volumes:
-            - ./client:/app
+            - ./app:/app
             - ./init.sh:/docker-entrypoint-initdb.d/init.sh
         ports:
             - 9010:8080

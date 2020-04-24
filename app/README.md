@@ -1,4 +1,4 @@
-# client
+# p2p-chat
 
 ## Project setup
 ```
