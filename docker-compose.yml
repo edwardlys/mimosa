@@ -9,3 +9,12 @@ services:
         build:
             context: .
             target: development
+        working_dir: /app
+        volumes:
+            - ./client:/app
+        ports:
+            - 9010:8080
+        entrypoint:
+            - "http-server"
+            - "/app/dist"
+        
