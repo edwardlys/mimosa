@@ -110,7 +110,7 @@ export default {
       }
     }
 
-    window.peer = new Peer()
+    window.peer = new Peer(this.peerConf)
 
     window.peer.on('open', this.onPeerOpen)
     window.peer.on('connection', this.onPeerConn)
