@@ -1,4 +1,4 @@
-# p2p-chat
+# Mimosa
 
 ## Project setup
 ```
