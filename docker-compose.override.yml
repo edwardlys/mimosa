@@ -1,0 +1,11 @@
+version: '3.7'
+
+services:
+    client:
+        volumes:
+            - ./client:/app
+        ports:
+            - 9010:8080
+        entrypoint:
+            - "http-server"
+            - "/app/dist"

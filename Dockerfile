@@ -1,9 +1,17 @@
-FROM node:lts-alpine
+# development stage
+FROM node:lts-alpine AS development
 
-# install simple http server for serving static content
-RUN npm install -g http-server
+RUN npm i -g @vue/cli http-server
 
-# make the 'app' folder the current working directory
+# builder stage
+FROM development AS builder
+
+COPY ./client /app
 WORKDIR /app
+RUN npm install
+RUN npm run build
 
-CMD [ "http-server", "dist" ]
+# production stage
+FROM nginx AS production
+
+COPY --from=builder /app/dist /usr/share/nginx/html
