@@ -1,20 +1,21 @@
 version: '3.7'
 
 services:
-    server:
-        image: peerjs/peerjs-server
-        ports:
-            - 9000:9000
+    # server:
+    #     image: peerjs/peerjs-server
+    #     ports:
+    #         - 9000:9000
     client:
         build:
             context: .
-            target: development
         working_dir: /app
         volumes:
             - ./client:/app
+            - ./init.sh:/docker-entrypoint-initdb.d/init.sh
         ports:
             - 9010:8080
+            - 9000:9000
         entrypoint:
-            - "http-server"
-            - "/app/dist"
+            - /bin/sh
+            - /docker-entrypoint-initdb.d/init.sh
         
