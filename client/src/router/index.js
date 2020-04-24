@@ -5,7 +5,7 @@ Vue.use(VueRouter)
 
   const routes = [
   {
-    path: '/chat',
+    path: '/',
     name: 'Chat',
     component: () => import('../views/Home.vue')
   }
