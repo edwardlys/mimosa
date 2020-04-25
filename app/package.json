@@ -1,12 +1,13 @@
 {
-  "name": "client",
+  "name": "mimosa",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "watch": "vue-cli-service build --watch"
+    "dev": "vue-cli-service build --mode development",
+    "watch": "vue-cli-service build --watch --mode development"
   },
   "dependencies": {
     "core-js": "^3.6.4",

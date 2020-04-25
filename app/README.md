@@ -1,4 +1,4 @@
-# client
+# Mimosa
 
 ## Project setup
 ```
