@@ -1,17 +1,13 @@
-start-dev: build-dev up-dev
+start: build up npm-build
 
-build-dev:
+build:
 	docker-compose build
 
-up-dev:
+up:
 	docker-compose up -d
 
+app-build:
+	docker-compose exec app npm run build
 
-start-prod: build-prod up-prod
-
-build-prod:
-	docker-compose -f docker-compose.yml -f docker-compose.production.yml build
-
-up-prod:
-	docker-compose -f docker-compose.yml -f docker-compose.production.yml up -d
-
+app-sh:
+	docker-compose exec app sh

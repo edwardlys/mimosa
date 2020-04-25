@@ -61,10 +61,12 @@
                     <div class="input-group mb-3">
                       <div>
                         <div id="video-canvas" width="320" height="240">
+                          <video id="video-peer"></video>
+                          <video id="video-self"></video>
                         </div>
                       </div>
                       <div class="input-group-append">
-                        <button class="btn btn-outline-secondary" type="button" v-on:click="callMedia" :disabled="!conn">Send</button>
+                        <button class="btn btn-outline-secondary" type="button" v-on:click="callMedia" :disabled="!conn">Video Call</button>
                       </div>
                     </div>
                   </div>
@@ -96,7 +98,6 @@ export default {
   },
   created () {
     if (process.env.NODE_ENV === 'production') {
-      console.log('prod');
       this.peerConf = {
         host: process.env.VUE_APP_PEER_SERVER_HOST, 
         path: process.env.VUE_APP_PEER_SERVER_PATH
@@ -121,12 +122,9 @@ export default {
       getUserMedia({video: true, audio: true}, function(stream) {
         call.answer(stream); // Answer the call with an A/V stream.
         call.on('stream', function(remoteStream) {
-          let videoCanvas = document.getElementById('video-canvas');
-
-          let video = document.createElement('video');
-          video.srcObject = remoteStream;
+          let video = document.getElementById('video-peer');
+          video.srcObject = remoteStream
           video.play();
-          videoCanvas.appendChild(video)
         });
       }, function(err) {
         console.log('Failed to get local stream' ,err);
@@ -180,16 +178,13 @@ export default {
     callMedia () {
       let self = this
       var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-      // let urlObject = window.URL;
       getUserMedia({video: true, audio: true}, function(stream) {
-        window.peer.call(self.peerUUID, stream);
-        // call.on('stream', function(remoteStream) {
-        //   let video = document.getElementById('video');
-        //   console.log('test');
-        //   console.log(urlObject);
-        //     video.src = urlObject.createObjectURL(remoteStream);
-        //   video.play();
-        // });
+        let call = window.peer.call(self.peerUUID, stream);
+        call.on('stream', function(remoteStream) {
+          let video = document.getElementById('video-self');
+          video.srcObject = remoteStream
+          video.play();
+        });
       }, function(err) {
         console.log('Failed to get local stream' ,err);
       });
