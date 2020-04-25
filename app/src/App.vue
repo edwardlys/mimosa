@@ -5,8 +5,14 @@
 </template>
 
 <style>
+@import url('https://fonts.googleapis.com/css?family=Roboto+Mono');
+
+html, body {
+  font-family: 'Roboto Mono', sans-serif;
+}
+
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Roboto Mono', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
@@ -24,5 +30,14 @@
 
 #nav a.router-link-exact-active {
   color: #42b983;
+}
+
+input {
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font-family: 'Roboto Mono', sans-serif;
+  font-size: 1rem;
+  border-bottom: 1px solid black;
 }
 </style>

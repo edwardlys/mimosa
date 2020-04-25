@@ -1,194 +1,68 @@
 <template>
-  <div>
-    <br>
-
-    <div class="container-lg">
-      <div class="row">
-        <div class="col">
-          <div class="card">
-            <div class="card-body">
-              <form class="container">
-                <div class="row">
-                  <div class="col-md form-group">
-                    <div class="input-group mb-3">
-                      <input type="text" class="form-control" id="uuid" v-model="UUID" readonly>
-                      <div class="input-group-append">
-                        <button class="btn btn-outline-secondary" type="button" v-on:click="copyUUID">Copy</button>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="col-md form-group">
-                      <input type="text" placeholder="Peer ID" class="form-control" id="peer-uuid" v-model="peerUUID" :disabled="lockPeer">
-                  </div>
-                </div>
-                <div class="row" v-if="!lockPeer">
-                  <button type="button" class="col btn btn-primary" :disabled="!peerUUID || lockPeer" v-on:click="connectPeer">Connect</button>
-                </div>
-                <div class="row">
-                  <div class="col">
-                    <h1 style="color: green" v-if="lockPeer">Connected!</h1>
-                  </div>
-                </div>
-              </form>
-            </div>
-          </div>
-
-          <br>
-
-          <div class="card">
-            <div class="card-body">
-              <form class="container">
-                <div class="row">
-                  <div class="col form-group">
-                    <div class="input-group mb-3">
-                      <textarea class="form-control" id="message" v-model="message" :disabled="!conn"></textarea>
-                      <div class="input-group-append">
-                        <button class="btn btn-outline-secondary" type="button" v-on:click="sendMessage" :disabled="!conn">Send</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </form>
-            </div>
-          </div>
-
-          <div class="card">
-            <div class="card-body">
-              <form class="container">
-                <div class="row">
-                  <div class="col form-group">
-                    <div class="input-group mb-3">
-                      <div>
-                        <div id="video-canvas" width="320" height="240">
-                          <video id="video-peer"></video>
-                          <video id="video-self"></video>
-                        </div>
-                      </div>
-                      <div class="input-group-append">
-                        <button class="btn btn-outline-secondary" type="button" v-on:click="callMedia" :disabled="!conn">Video Call</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </form>
-            </div>
-          </div>
+    <div class="container">
+        <div class="item">
+            <h1> Mimosa </h1>
         </div>
-      </div>
+        <div class="item">
+            <span>Quiet, simple, fast communication</span>
+        </div>
+        <div class="item">
+            <div>Your ID</div>
+            <div v-on:click="copyID">
+                <input id="id-field" type="text" v-model="id" readonly>
+            </div>
+        </div>
+        <div class="item">
+            <div>Remote ID</div>
+            <div>
+                <input id="remote-id-field" type="text" v-model="remoteID">
+            </div>
+        </div>
+        <div class="item">
+            <div>
+                <hold-button>test</hold-button>
+                <button>test</button>
+            </div>
+        </div>
+        <notify ref="n"></notify>
     </div>
-  </div>
 </template>
 
 <script>
-import Peer from 'peerjs'
+import Notify from '../components/Notify'
+import HoldButton from '../components/HoldButton'
 
 export default {
-  name: 'Home',
-  data () {
-    return {
-      UUID: null,
-      peerUUID: null,
-      conn: null,
-      connectionStatus: 0,
-      message: '',
-      lockPeer: false,
-      peerConf: {}
+    name: 'Home',
+    components: {
+        'notify': Notify,
+        'hold-button': HoldButton
+    },
+    data () {
+        return {
+            id: null,
+            remoteID: null
+        }
+    },
+    created () {
+        window.peer.on('open', (id) => {
+            this.id = id
+        })
+    },
+    methods: {
+        copyID () {
+            let el = document.getElementById('id-field')
+            el.select()
+            document.execCommand('copy')
+            this.$refs.n.show('ID copied')
+        }
     }
-  },
-  created () {
-    if (process.env.NODE_ENV === 'production') {
-      this.peerConf = {
-        host: process.env.VUE_APP_PEER_SERVER_HOST, 
-        path: process.env.VUE_APP_PEER_SERVER_PATH
-      }
-    } else if (process.env.NODE_ENV === 'development') {
-      this.peerConf = {
-        host: process.env.VUE_APP_PEER_SERVER_HOST, 
-        port: process.env.VUE_APP_PEER_SERVER_PORT, 
-        debug: 3, 
-        path: process.env.VUE_APP_PEER_SERVER_PATH
-      }
-    }
-
-    window.peer = new Peer(this.peerConf)
-
-    window.peer.on('open', this.onPeerOpen)
-    window.peer.on('connection', this.onPeerConn)
-
-    var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-    
-    window.peer.on('call', function(call) {
-      getUserMedia({video: true, audio: true}, function(stream) {
-        call.answer(stream); // Answer the call with an A/V stream.
-        call.on('stream', function(remoteStream) {
-          let video = document.getElementById('video-peer');
-          video.srcObject = remoteStream
-          video.play();
-        });
-      }, function(err) {
-        console.log('Failed to get local stream' ,err);
-      });
-    });
-  },
-  methods: {
-    onPeerOpen (id) {
-      this.UUID = id
-    },
-    onPeerConn (conn) {
-      this.conn = conn
-      this.conn.on('data', this.onConnReceiveData)
-    },
-    copyUUID () {
-      var UUIDInput = document.getElementById("uuid")
-
-      UUIDInput.select()
-      UUIDInput.setSelectionRange(0, 99999)
-
-      document.execCommand("copy")
-    },
-    pasteUUID () {
-      let self = this
-      let text = navigator.clipboard.readText()
-      text.then(function (item) {
-        self.peerUUID = item.trim()
-      })
-    },
-    connectPeer () {
-      this.conn = window.peer.connect(this.peerUUID)
-      this.conn.on('open', this.onConnOpen)
-      this.conn.on('data', this.onConnReceiveData)
-    },
-    onConnOpen () {
-      this.conn.send({secretUUID: this.UUID})
-      this.lockPeer = true
-    },
-    sendMessage () {
-      this.conn.send({string: this.message})
-      this.message = ''
-    },
-    onConnReceiveData (data) {
-      if ('secretUUID' in data) {
-        this.peerUUID = data.secretUUID
-        this.lockPeer = true
-      } else {
-        alert(data.string)
-      }
-    },
-    callMedia () {
-      let self = this
-      var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-      getUserMedia({video: true, audio: true}, function(stream) {
-        let call = window.peer.call(self.peerUUID, stream);
-        call.on('stream', function(remoteStream) {
-          let video = document.getElementById('video-self');
-          video.srcObject = remoteStream
-          video.play();
-        });
-      }, function(err) {
-        console.log('Failed to get local stream' ,err);
-      });
-    }
-  }
 }
 </script>
+
+<style scoped>
+.item {
+    padding-top: 5%;
+    padding-bottom: 5%;
+}
+</style>

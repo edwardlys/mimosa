@@ -8,6 +8,16 @@ Vue.use(VueRouter)
     path: '/',
     name: 'Home',
     component: () => import('../views/Home.vue')
+  },
+  {
+    path: '/text',
+    name: 'Text',
+    component: () => import('../views/Text.vue')
+  },
+  {
+    path: '/video',
+    name: 'Video',
+    component: () => import('../views/Video.vue')
   }
 ]
 
