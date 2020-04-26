@@ -290,7 +290,9 @@ export default {
             this.$refs.n.show('Remote connection established')
         },
         remoteClose () {
+            this.conn.close()
             this.conn = null
+            this.endCall()
             this.remoteID = null
             this.$refs.n.show('Remote has been disconnected')
             this.messageLog = []
@@ -299,6 +301,7 @@ export default {
         disconnectRemote () {
             this.conn.close()
             this.conn = null
+            this.endCall()
             this.messageLog = []
         },
         sendData () {
