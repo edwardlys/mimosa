@@ -144,9 +144,9 @@
                 </p>
 
                 <p>
-                    <small><strong>Contact:</strong></small><br>
-                    <small>>elys.1993a@gmail.com</small>
-                    <small>>github.com/CaptFurball/mimosa</small>
+                    <small><strong>Others:</strong></small><br>
+                    <small>><a href="mailto:elys.1993a@gmail.com">Send me a mail!</a></small><br>
+                    <small>><a href="github.com/CaptFurball/mimosa">Project Mimosa</a></small>
                 </p>
 
                 <p><small>This project was made with PeerJS WebRTC</small></p>
