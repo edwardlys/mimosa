@@ -35,16 +35,18 @@
         <div id="home" class="tab-content" style="display: block">
             <div class="item">
                 <h1> Mimosa </h1>
-            </div>
-            <div class="item">
-                <div>
-                    <span>Quiet and simple communication</span>
-                </div>
+                <small>Quiet and simple communication</small>
             </div>
             <div class="item">
                 <div>Your invite link</div>
                 <div v-on:click="copyLink">
                     <input id="url-field" type="text" v-model="inviteLink" readonly>
+                </div>
+            </div>
+            <div class="item">
+                <div>Your ID</div>
+                <div v-on:click="copyID">
+                    <input id="id-field" type="text" v-model="peer.id" readonly>
                 </div>
             </div>
             <div class="item">
@@ -64,6 +66,9 @@
                     <button v-if="!conn" v-on:click="connectRemote" :disabled="!remoteID || !peer.open || peer.disconnected">CONNECT</button>
                     <button v-if="!!conn" v-on:click="disconnectRemote">DISCONNECT</button>
                 </div>
+            </div>
+            <div class="item" v-on:click="openInstruction">
+                <div>How to use?</div>
             </div>
         </div>
 
@@ -109,6 +114,37 @@
             </div>
         </div>
         
+        <div id="instruction-modal" class="modal">
+            <div class="modal-content">
+                <span id="modal-btn-close" class="close" v-on:click="closeInstruction">&times;</span>
+                
+                <p>
+                    <strong>If you are the initiator:</strong><br>
+                    >Copy the invite link or the user ID and share it to one partner
+                    >Wait for your request to be accepted
+                    >Try not to refresh the page as it will issue you a new session ID and the old one will be destroyed
+                </p>
+
+                <p>
+                    <strong>If you receive invite link:</strong><br>
+                    >Paste the link to the browser<br>
+                    >Click connect to accept the request
+                </p>
+
+                <p>
+                    <strong>If you receive remote ID:</strong><br>
+                    >Open app.nanas/mimosa and paste the link into REMOTE ID field<br>
+                    >Click connectto accept request
+                </p>
+
+                <p>
+                    <strong>Note</strong><br>
+                    >Consent is important<br>
+                    >This chat is currently limited to one to one chat
+                </p>
+            </div>
+        </div>
+
         <notify ref="n"></notify>
     </div>
 </template>
@@ -132,7 +168,8 @@ export default {
             call: null,
             message: null,
             messageLog: [],
-            inviteLink: ''
+            inviteLink: '',
+            streams: []
         }
     },
     mounted () {
@@ -166,14 +203,27 @@ export default {
 
         if (this.$route.query.remote) {
             this.remoteID = this.$route.query.remote
+            this.$router.replace({ query: {} })
         }
     },
     methods: {
+        openInstruction () {
+            document.getElementById("instruction-modal").style.display = "block"
+        },
+        closeInstruction () {
+            document.getElementById("instruction-modal").style.display = "none"
+        },
         copyLink () {
             let el = document.getElementById('url-field')
             el.select()
             document.execCommand('copy')
             this.$refs.n.show('link copied')
+        },
+        copyID () {
+            let el = document.getElementById('id-field')
+            el.select()
+            document.execCommand('copy')
+            this.$refs.n.show('id copied')
         },
         serverOpen () {
             this.inviteLink = process.env.VUE_APP_DOMAIN_URL + `main?remote=${this.peer.id}`
@@ -238,6 +288,8 @@ export default {
                 this.messageLog.push(messageObj)
                 this.conn.send(messageObj)
 
+                window.scroll(0, 99999999)
+
                 this.message = ''
             }
         },
@@ -245,6 +297,7 @@ export default {
             if(data.type == 'message') {
                 this.messageLog.push(data)
                 this.remoteUsername = data.username
+                window.scroll(0, 99999999)
             }
         },
         remoteCall (call) {
@@ -252,14 +305,16 @@ export default {
             this.call = call
             let self = this
             getUserMedia({video: true, audio: true}, function(stream) {
+                stream.getTracks().forEach(function (streamTrack) {
+                    self.streams.push(streamTrack)
+                })
+
                 if (confirm("answer call?")) {
                     self.openTab('video')
-                    self.call.answer(stream);
-                    self.call.on('stream', function(remoteStream) {
-                        let video = document.getElementById('remote-video');
-                        video.srcObject = remoteStream
-                        video.play();
-                    });
+                    self.call.answer(stream)
+                    self.call.on('stream', self.streamToCanvas)
+                        .on('close', self.endCall)
+                        .on('error', (e) => { console.log(e) })
                 }
                 
             }, function(err) {
@@ -270,20 +325,29 @@ export default {
             var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
             let self = this
             getUserMedia({video: true, audio: true}, function(stream) {
-                self.call = self.peer.call(self.conn.peer, stream);
-                self.call.on('stream', function(remoteStream) {
-                    let video = document.getElementById('remote-video');
-                    video.srcObject = remoteStream
-                    video.play();
-                });
+                stream.getTracks().forEach(function (streamTrack) {
+                    self.streams.push(streamTrack)
+                })
+
+                self.call = self.peer.call(self.conn.peer, stream)
+                self.call.on('stream', self.streamToCanvas)
+                    .on('close', self.endCall)
+                    .on('error', (e) => { console.log(e) })
             }, function(err) {
                 console.log(err)
                 this.$refs.n.show('The video call has failed')
             });
         },
-        endCall () {
+        streamToCanvas (remoteStream) {
             let video = document.getElementById('remote-video');
-            video.srcObject.getTracks
+            video.srcObject = remoteStream
+            video.play();
+        },
+        endCall () {
+            this.streams.forEach(function (stream) {
+                stream.stop()
+            })
+
             this.call.close()
             this.call = null
         },
