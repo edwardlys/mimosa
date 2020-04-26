@@ -99,7 +99,12 @@
         </div>
 
         <div id="video" class="tab-content">
-            coming soon
+            <div class="item">
+                <video id="remote-video" width="320" height="240"></video>
+            </div>
+            <div class="item">
+                <button v-on:click="startVideo" :disabled="!conn">Call</button>
+            </div>
         </div>
         
         <notify ref="n"></notify>
@@ -153,6 +158,7 @@ export default {
             .on('disconnected', this.serverDisconnected)
             .on('error',        this.peerError)
             .on('connection',   this.remoteOpen)
+            .on('call',         this.remoteCall)
 
         console.log(this.peer)
     },
@@ -233,6 +239,39 @@ export default {
                 this.messageLog.push(data)
                 this.remoteUsername = data.username
             }
+        },
+        remoteCall (call) {
+            var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+
+            getUserMedia({video: true, audio: true}, function(stream) {
+                if (confirm("answer call?")) {
+                    call.answer(stream);
+                    call.on('stream', function(remoteStream) {
+                        let video = document.getElementById('remote-video');
+                        video.srcObject = remoteStream
+                        video.play();
+                    });
+                }
+                
+            }, function(err) {
+                console.log('Failed to get local stream' ,err);
+            });
+        },
+        startVideo () {
+            let self = this
+            var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+            
+            getUserMedia({video: true, audio: true}, function(stream) {
+                let call = self.peer.call(self.conn.peer, stream);
+                call.on('stream', function(remoteStream) {
+                    let video = document.getElementById('remote-video');
+                    video.srcObject = remoteStream
+                    video.play();
+                });
+            }, function(err) {
+                console.log(err)
+                this.$refs.n.show('The video call has failed')
+            });
         },
         peerError (err) {
             console.log(err)
