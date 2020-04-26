@@ -42,9 +42,9 @@
                 </div>
             </div>
             <div class="item">
-                <div>Your ID</div>
-                <div v-on:click="copyID">
-                    <input id="id-field" type="text" v-model="peer.id" readonly>
+                <div>Your invite link</div>
+                <div v-on:click="copyLink">
+                    <input id="url-field" type="text" v-model="inviteLink" readonly>
                 </div>
             </div>
             <div class="item">
@@ -132,6 +132,7 @@ export default {
             call: null,
             message: null,
             messageLog: [],
+            inviteLink: ''
         }
     },
     mounted () {
@@ -163,16 +164,19 @@ export default {
             .on('connection',   this.remoteOpen)
             .on('call',         this.remoteCall)
 
-        console.log(this.peer)
+        if (this.$route.query.remote) {
+            this.remoteID = this.$route.query.remote
+        }
     },
     methods: {
-        copyID () {
-            let el = document.getElementById('id-field')
+        copyLink () {
+            let el = document.getElementById('url-field')
             el.select()
             document.execCommand('copy')
-            this.$refs.n.show('ID copied')
+            this.$refs.n.show('link copied')
         },
         serverOpen () {
+            this.inviteLink = process.env.VUE_APP_DOMAIN_URL + `main?remote=${this.peer.id}`
             this.$refs.n.show('You are connected to the server')
         },
         serverClose () {
@@ -182,7 +186,6 @@ export default {
             this.$refs.n.show('You are disconnected from the server')
         },
         connectRemote () {
-            this.remoteConnecting = true
             if (this.remoteID == this.peer.id) {
                 this.$refs.n.show('This will not work, you are not THAT lonely')
             } else {
