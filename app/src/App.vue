@@ -124,7 +124,6 @@ i[disabled] {
   margin: 10px;
   margin-bottom: 60px;
   border: 1px solid black;
-  
 }
 
 .chat-type {
@@ -144,16 +143,16 @@ i[disabled] {
 .chat-box .chat-own {
   background-color: white;
   color: black;
-  text-align: right;
-  padding-left: 30%;
+  /* text-align: right; */
+  /* padding-left: 30%; */
   overflow-wrap: break-word;
 }
 
 .chat-box .chat-foreign {
   background-color: black;
   color: white;
-  text-align: left;
-  padding-right: 30%;
+  /* text-align: left; */
+  /* padding-right: 30%; */
   overflow-wrap: break-word;
 }
 

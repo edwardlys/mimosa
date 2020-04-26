@@ -76,7 +76,7 @@
                                 <small><i>{{ !!username? username: 'yourself' }}:</i></small>
                             </div>
                             <div>
-                                {{ m.message.trim() }}
+                                >{{ m.message.trim() }}
                             </div>
                         </div>
                     </div>
@@ -86,14 +86,14 @@
                                 <small><i>{{ !!remoteUsername? remoteUsername: 'stranger' }}:</i></small>
                             </div>
                             <div>
-                                {{ m.message.trim() }}
+                                >{{ m.message.trim() }}
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="chat-type">
-                <textarea id="type-message" v-model="message" :disabled="!conn"></textarea>
+                <textarea id="type-message" v-model="message" :disabled="!conn" placeholder="Type message here and hit Enter"></textarea>
                 <button style="display:none" id="send-message" v-on:click="sendData" :disabled="!message || !conn">Send</button>
             </div>
         </div>
@@ -154,8 +154,6 @@ export default {
             .on('error',        this.peerError)
             .on('connection',   this.remoteOpen)
 
-        
-
         console.log(this.peer)
     },
     methods: {
@@ -176,16 +174,20 @@ export default {
         },
         connectRemote () {
             this.remoteConnecting = true
-            this.conn = this.peer.connect(this.remoteID)
-            this.conn.on('open', this.remoteReady)
-                .on('close', this.remoteClose)
-                .on('error', this.peerError)
-                .on('data', this.receiveData)
+            if (this.remoteID == this.peer.id) {
+                this.$refs.n.show('This will not work, you are not THAT lonely')
+            } else {
+                this.conn = this.peer.connect(this.remoteID)
+                this.conn.on('open', this.remoteReady)
+                    .on('close', this.remoteClose)
+                    .on('error', this.peerError)
+                    .on('data', this.receiveData)
+            }
         }, 
         remoteOpen (conn) {
             if (this.conn != null) {
                 conn.close()
-                this.$refs.n.show('Rejected a connection')
+                this.$refs.n.show('Remote is busy')
             } else {
                 this.conn = conn
                 this.remoteID = this.conn.peer
