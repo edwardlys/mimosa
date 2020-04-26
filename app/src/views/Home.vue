@@ -103,7 +103,9 @@
                 <video id="remote-video" width="320" height="240"></video>
             </div>
             <div class="item">
-                <button v-on:click="startVideo" :disabled="!conn">Call</button>
+                <button v-if="!call" v-on:click="startCall" :disabled="!conn">Call</button>
+                <button v-if="!!call" v-on:click="openCallFullScreen">Full</button>
+                <button v-if="!!call" v-on:click="endCall">End</button>
             </div>
         </div>
         
@@ -127,6 +129,7 @@ export default {
             peer: null,
             username: null,
             conn: null,
+            call: null,
             message: null,
             messageLog: [],
         }
@@ -216,6 +219,7 @@ export default {
         },
         disconnectRemote () {
             this.conn.close()
+            this.conn = null
             this.messageLog = []
         },
         sendData () {
@@ -242,11 +246,13 @@ export default {
         },
         remoteCall (call) {
             var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-
+            this.call = call
+            let self = this
             getUserMedia({video: true, audio: true}, function(stream) {
                 if (confirm("answer call?")) {
-                    call.answer(stream);
-                    call.on('stream', function(remoteStream) {
+                    self.openTab('video')
+                    self.call.answer(stream);
+                    self.call.on('stream', function(remoteStream) {
                         let video = document.getElementById('remote-video');
                         video.srcObject = remoteStream
                         video.play();
@@ -257,13 +263,12 @@ export default {
                 console.log('Failed to get local stream' ,err);
             });
         },
-        startVideo () {
-            let self = this
+        startCall () {
             var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-            
+            let self = this
             getUserMedia({video: true, audio: true}, function(stream) {
-                let call = self.peer.call(self.conn.peer, stream);
-                call.on('stream', function(remoteStream) {
+                self.call = self.peer.call(self.conn.peer, stream);
+                self.call.on('stream', function(remoteStream) {
                     let video = document.getElementById('remote-video');
                     video.srcObject = remoteStream
                     video.play();
@@ -272,6 +277,12 @@ export default {
                 console.log(err)
                 this.$refs.n.show('The video call has failed')
             });
+        },
+        endCall () {
+            let video = document.getElementById('remote-video');
+            video.srcObject.getTracks
+            this.call.close()
+            this.call = null
         },
         peerError (err) {
             console.log(err)
@@ -302,6 +313,18 @@ export default {
                 break;
             default:
                 this.$refs.n.show('An error has occured, please contact us at elys.1993a@gmail.com for troubleshooting')
+            }
+        },
+        openCallFullScreen () {
+            var el = document.getElementById("remote-video");
+            if (el.requestFullscreen) {
+                el.requestFullscreen();
+            } else if (el.mozRequestFullScreen) { /* Firefox */
+                el.mozRequestFullScreen();
+            } else if (el.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
+                el.webkitRequestFullscreen();
+            } else if (el.msRequestFullscreen) { /* IE/Edge */
+                el.msRequestFullscreen();
             }
         },
         openTab (tabName) {
