@@ -329,9 +329,7 @@ export default {
                 this.remoteUsername = data.username
                 window.scroll(0, 99999999)
 
-                if (!("Notification" in window)) {
-                    this.$refs.n.show('This browser does not support desktop notification')
-                } else if (Notification.permission === 'granted') {
+                if (Notification.permission === 'granted') {
                     navigator.serviceWorker.ready.then(function(registration) {
                         registration.showNotification(`${ data.message }`);
                     });
@@ -350,6 +348,21 @@ export default {
             var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
             this.call = call
             this.openTab('video')
+
+            if (Notification.permission === 'granted') {
+                navigator.serviceWorker.ready.then(function(registration) {
+                    registration.showNotification('Incoming call');
+                });
+            } else if (Notification.permission !== 'denied') {
+                Notification.requestPermission().then(function (permission) {
+                    if (permission === "granted") {
+                        navigator.serviceWorker.ready.then(function(registration) {
+                            registration.showNotification('Incoming call');
+                        });
+                    }
+                });
+            }
+
             let self = this
             getUserMedia({video: true, audio: true}, function(stream) {
                 stream.getTracks().forEach(function (streamTrack) {
