@@ -145,10 +145,11 @@
 
                 <p>
                     <strong>Contact:</strong><br>
-                    >elys.1993a@gmail.com
+                    >Edward Lim @ elys.1993a@gmail.com
+                    >Project Repository @ github.com/CaptFurball/mimosa
                 </p>
 
-                <p><small>Credit to the makers of PeerJS the wrapper for WebRTC</small></p>
+                <p><small>This project was made with PeerJS WebRTC</small></p>
             </div>
         </div>
 
