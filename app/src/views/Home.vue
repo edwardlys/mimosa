@@ -332,11 +332,15 @@ export default {
                 if (!("Notification" in window)) {
                     this.$refs.n.show('This browser does not support desktop notification')
                 } else if (Notification.permission === 'granted') {
-                    new Notification(`${ data.message }`);
+                    navigator.serviceWorker.ready.then(function(registration) {
+                        registration.showNotification(`${ data.message }`);
+                    });
                 } else if (Notification.permission !== 'denied') {
                     Notification.requestPermission().then(function (permission) {
                         if (permission === "granted") {
-                            new Notification(`${ data.message }`);
+                            navigator.serviceWorker.ready.then(function(registration) {
+                                registration.showNotification(`${ data.message }`);
+                            });
                         }
                     });
                 }
