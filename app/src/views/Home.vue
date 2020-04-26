@@ -77,21 +77,25 @@
                 <div v-bind:key="m.timestamp" v-for="(m, i) in messageLog">
                     <div v-if="m.id == peer.id">
                         <div class="chat-own">
-                            <div v-if="!messageLog[i - 1] || messageLog[i - 1].id != m.id">
+                            <div class="chat-header" v-if="!messageLog[i - 1] || messageLog[i - 1].id != m.id">
                                 <small><i>{{ !!username? username: 'yourself' }}:</i></small>
                             </div>
                             <div>
-                                >{{ m.message.trim() }}
+                                > {{ m.message.trim() }}
+                            </div>
+                            <div class="chat-footer" v-if="!messageLog[i + 1] || messageLog[i + 1].id != m.id">
                             </div>
                         </div>
                     </div>
                     <div v-if="m.id != peer.id">
                         <div class="chat-foreign">
-                            <div v-if="!messageLog[i - 1] || messageLog[i - 1].id != m.id">
+                            <div class="chat-header" v-if="!messageLog[i - 1] || messageLog[i - 1].id != m.id">
                                 <small><i>{{ !!remoteUsername? remoteUsername: 'stranger' }}:</i></small>
                             </div>
                             <div>
-                                >{{ m.message.trim() }}
+                                > {{ m.message.trim() }}
+                            </div>
+                            <div class="chat-footer" v-if="!messageLog[i + 1] || messageLog[i + 1].id != m.id">
                             </div>
                         </div>
                     </div>
@@ -108,9 +112,23 @@
                 <video id="remote-video" width="320" height="240"></video>
             </div>
             <div class="item">
-                <button v-if="!call" v-on:click="startCall" :disabled="!conn">Call</button>
-                <button v-if="!!call" v-on:click="openCallFullScreen">Full</button>
-                <button v-if="!!call" v-on:click="endCall">End</button>
+                <button v-if="!call" v-on:click="startCall" :disabled="!conn">
+                    <span class="material-icons">
+                        call
+                    </span>
+                </button>
+                <button v-if="!!call" v-on:click="endCall">
+                    <span class="material-icons">
+                        call_end
+                    </span>
+                </button>
+            </div>
+            <div class="item">
+                <button v-if="!!call" v-on:click="openCallFullScreen">
+                    <span class="material-icons">
+                        fullscreen
+                    </span>
+                </button>
             </div>
         </div>
         
@@ -211,7 +229,6 @@ export default {
 
         if (this.$route.query.remote) {
             this.remoteID = this.$route.query.remote
-            this.$router.replace({ query: {} })
         }
     },
     methods: {
@@ -268,6 +285,7 @@ export default {
             }
         },
         remoteReady () {
+            this.$router.replace({ query: {} })
             this.openTab('chat')
             this.$refs.n.show('Remote connection established')
         },
@@ -408,11 +426,11 @@ export default {
             var el = document.getElementById("remote-video");
             if (el.requestFullscreen) {
                 el.requestFullscreen();
-            } else if (el.mozRequestFullScreen) { /* Firefox */
+            } else if (el.mozRequestFullScreen) {
                 el.mozRequestFullScreen();
-            } else if (el.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
+            } else if (el.webkitRequestFullscreen) {
                 el.webkitRequestFullscreen();
-            } else if (el.msRequestFullscreen) { /* IE/Edge */
+            } else if (el.msRequestFullscreen) {
                 el.msRequestFullscreen();
             }
         },

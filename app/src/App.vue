@@ -125,6 +125,7 @@ i[disabled] {
   margin: 10px;
   margin-bottom: 100px;
   border: 1px solid black;
+  text-align: left;
 }
 
 .chat-type {
@@ -141,11 +142,24 @@ i[disabled] {
   height: 90%;
 }
 
+.chat-header {
+  padding-top: 20px;
+  padding-bottom: 15px;
+  text-align: center;
+}
+
+.chat-footer {
+  padding-bottom: 15px;
+}
+
 .chat-box .chat-own {
   background-color: white;
   color: black;
   /* text-align: right; */
   /* padding-left: 30%; */
+  padding-right: 50px;
+  padding-left: 50px;
+  padding-bottom: 5px;
   overflow-wrap: break-word;
 }
 
@@ -154,6 +168,9 @@ i[disabled] {
   color: white;
   /* text-align: left; */
   /* padding-right: 30%; */
+  padding-right: 50px;
+  padding-left: 50px;
+  padding-bottom: 5px;
   overflow-wrap: break-word;
 }
 
