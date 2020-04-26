@@ -138,10 +138,17 @@
                 </p>
 
                 <p>
-                    <strong>Note</strong><br>
+                    <strong>Note:</strong><br>
                     >Consent is important<br>
                     >This chat is currently limited to one to one chat
                 </p>
+
+                <p>
+                    <strong>Contact:</strong><br>
+                    >elys.1993a@gmail.com
+                </p>
+
+                <p><small>Credit to the makers of PeerJS the wrapper for WebRTC</small></p>
             </div>
         </div>
 
