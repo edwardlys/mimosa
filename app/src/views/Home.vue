@@ -120,8 +120,8 @@
                 
                 <p>
                     <strong>If you are the initiator:</strong><br>
-                    >Copy the invite link or the user ID and share it to one partner
-                    >Wait for your request to be accepted
+                    >Copy the invite link or the user ID and share it to one partner<br>
+                    >Wait for your request to be accepted<br>
                     >Try not to refresh the page as it will issue you a new session ID and the old one will be destroyed
                 </p>
 
