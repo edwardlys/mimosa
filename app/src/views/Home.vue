@@ -144,9 +144,9 @@
                 </p>
 
                 <p>
-                    <strong>Contact:</strong><br>
-                    >Edward Lim @ elys.1993a@gmail.com
-                    >Project Repository @ github.com/CaptFurball/mimosa
+                    <small><strong>Contact:</strong></small><br>
+                    <small>>elys.1993a@gmail.com</small>
+                    <small>>github.com/CaptFurball/mimosa</small>
                 </p>
 
                 <p><small>This project was made with PeerJS WebRTC</small></p>
