@@ -30,7 +30,7 @@ export default {
                 () => { 
                     el.className = el.classList.remove('show') 
                     this.message = ''
-                }, 2000)
+                }, 3000)
         }
     }
 }

@@ -69,7 +69,10 @@ export default {
     mounted () {
         if (this.$route.query.remote) {
             this.$parent.remoteID = this.$route.query.remote
-            this.$parent.$refs.n.show('invite link received, press connect to start')
+            setTimeout(
+                () => { 
+                    this.$parent.$refs.n.show('invite link received, press connect to start')
+                }, 2000)
         }
     },
     methods: {
