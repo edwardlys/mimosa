@@ -2,7 +2,7 @@
     <div class="section">
         <div class="item">
             <h1> Mimosa </h1>
-            <small>{{ process.env.VUE_APP_PEER_SERVER_HOST }}</small>
+            <small>{{ process.env.VUE_APP_VERSION }}</small>
         </div>
         <div class="item" v-if="$parent.peer.open && !$parent.peer.disconnected">
             <div>Your invite link</div>
