@@ -59,7 +59,6 @@ export default {
             dataConnection: null,
             mediaConnection: null,
             mediaConnectionRole: null,
-            mediaConnectionRemoteStream: null,
             messageLog: [],
             mediaStreamTracks: []
         }
@@ -94,9 +93,16 @@ export default {
                 this.$router.push(route)
             }
         },
+        nukeServerConn () {
+            this.peer.disconnect()
+        },
         nukeAll () {
-            this.nukedataConnection();
-            this.nukeMediaConnection();
+            this.nukeAllRemote()
+            this.peer.destroy()
+        },
+        nukeAllRemote () {
+            this.nukedataConnection()
+            this.nukeMediaConnection()
             this.$refs.n.show('Channel closed')
         },
         nukedataConnection () {
@@ -125,7 +131,6 @@ export default {
             }
 
             this.mediaConnectionRole = null
-            this.mediaConnectionRemoteStream = null
         },
         serverOpen () {
             this.inviteLink = `${process.env.VUE_APP_DOMAIN_URL}home?remote=${this.peer.id}`
@@ -154,7 +159,7 @@ export default {
             this.$refs.n.show('Channel ready')
         },
         dataConnectionClosed () {
-            this.nukeAll()
+            this.nukeAllRemote()
         },
         dataConnectionReceive (payload) {
             if(payload.type == 'message') {
@@ -204,7 +209,7 @@ export default {
             }
         },
         peerError (err) {
-            this.nukeAll()
+            this.nukeAllRemote()
             console.log(err)
             
             switch(err.type) {

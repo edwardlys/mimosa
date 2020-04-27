@@ -4,7 +4,7 @@
             <h1> Mimosa </h1>
             <small>Quiet and simple communication</small>
         </div>
-        <div class="item">
+        <div class="item" v-if="$parent.peer.open && !$parent.peer.disconnected">
             <div>Your invite link</div>
             <div v-on:click="copyInviteLink">
                 <input 
@@ -14,7 +14,7 @@
                     readonly>
             </div>
         </div>
-        <div class="item">
+        <div class="item" v-if="$parent.peer.open && !$parent.peer.disconnected">
             <div>Your ID</div>
             <div v-on:click="copyUserID">
                 <input 
@@ -30,25 +30,35 @@
                 <input type="text" v-model="$parent.username">
             </div>
         </div>
-        <div class="item">
+        <div class="item" v-if="$parent.peer.open && !$parent.peer.disconnected">
             <div>Remote ID</div>
             <div>
                 <input type="text" v-model="$parent.remoteID">
             </div>
         </div>
         <div class="item">
-            <button 
-                v-if="!this.$parent.dataConnection" 
-                v-on:click="connect" 
-                :disabled="!$parent.remoteID || !this.$parent.peer.open || this.$parent.peer.disconnected">
-                CONNECT
-            </button>
+            <div v-if="!$parent.peer.open || $parent.peer.disconnected">
+                <button 
+                    v-on:click="$parent.peer.reconnect()">
+                    RECONNECT TO SIGNAL SERVER
+                </button>
+            </div>
+        </div>
+        <div class="item">
+            <div v-if="$parent.peer.open && !$parent.peer.disconnected">
+                <button 
+                    v-if="!this.$parent.dataConnection" 
+                    v-on:click="connect" 
+                    :disabled="!$parent.remoteID || !this.$parent.peer.open || this.$parent.peer.disconnected">
+                    CONNECT
+                </button>
 
-            <button 
-                v-if="!!this.$parent.dataConnection && !this.$parent.dataConnection.open" 
-                disabled>
-                CONNECTING..
-            </button>
+                <button 
+                    v-if="!!this.$parent.dataConnection && !this.$parent.dataConnection.open" 
+                    disabled>
+                    CONNECTING..
+                </button>
+            </div>
 
             <button 
                 v-if="!!this.$parent.dataConnection && !!this.$parent.dataConnection.open" 
@@ -58,7 +68,7 @@
         </div>
         <div class="item" >
             <button v-on:click="$parent.redirectNav('/home/instruction')">
-                How to use?
+                Help
             </button>
         </div>
     </div>
@@ -102,7 +112,7 @@ export default {
             }
         },
         disconnect () {
-            this.$parent.nukeAll()
+            this.$parent.nukeAllRemote()
         }
     }
 }

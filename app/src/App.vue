@@ -128,6 +128,7 @@ button.active {
 
 button:focus{
     outline:none;
+    background: orange;
 }
 
 button:disabled,
