@@ -32,6 +32,10 @@ html, body {
     color: red
 }
 
+.status {
+    background: white;
+}
+
 .status-value {
     text-align: left;
 }
@@ -64,7 +68,8 @@ html, body {
 }
 
 .section {
-    margin: 20px;
+    margin-top: 20px;
+    margin-bottom: 75px;
 }
 
 input {

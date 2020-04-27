@@ -24,6 +24,11 @@ const routes = [
                 path: 'video',
                 name: 'Video',
                 component: () => import('../views/Video.vue')
+            },
+            {
+                path: 'instruction',
+                name: 'Instruction',
+                component: () => import('../views/Instruction.vue')
             }
         ]
     },

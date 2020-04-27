@@ -105,7 +105,7 @@ export default {
 }
 
 .message-type-area {
-    margin-bottom: 75px;
+    padding-bottom: 75px;
     background: white;
     position: fixed;
     bottom: 0;

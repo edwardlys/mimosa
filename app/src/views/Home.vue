@@ -128,7 +128,7 @@ export default {
             this.mediaConnectionRemoteStream = null
         },
         serverOpen () {
-            this.inviteLink = `${process.env.VUE_APP_DOMAIN_URL}home/main?remote=${this.peer.id}`
+            this.inviteLink = `${process.env.VUE_APP_DOMAIN_URL}home?remote=${this.peer.id}`
             this.$refs.n.show('Connected to signal server')
         },
         peerDestroyed () {

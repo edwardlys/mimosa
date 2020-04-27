@@ -50,6 +50,11 @@
                 DISCONNECT
             </button>
         </div>
+        <div class="item" >
+            <button v-on:click="$parent.redirectNav('/home/instruction')">
+                How to use?
+            </button>
+        </div>
     </div>
 </template>
 
