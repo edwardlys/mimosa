@@ -12,8 +12,8 @@
                     |
                     <span>
                         Remote 
-                        <i v-if="!!dataConnection" class="material-icons md-12 green">brightness_1</i>
-                        <i v-if="!dataConnection" class="material-icons md-12 red">brightness_1</i>
+                        <i v-if="!!dataConnection && !!dataConnection.open" class="material-icons md-12 green">brightness_1</i>
+                        <i v-if="!dataConnection || !dataConnection.open" class="material-icons md-12 red">brightness_1</i>
                     </span>
                     |
                     <span>
@@ -204,6 +204,7 @@ export default {
             }
         },
         peerError (err) {
+            this.nukeAll()
             console.log(err)
             
             switch(err.type) {

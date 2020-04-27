@@ -45,7 +45,13 @@
             </button>
 
             <button 
-                v-if="!!this.$parent.dataConnection" 
+                v-if="!!this.$parent.dataConnection && !this.$parent.dataConnection.open" 
+                disabled>
+                CONNECTING..
+            </button>
+
+            <button 
+                v-if="!!this.$parent.dataConnection && !!this.$parent.dataConnection.open" 
                 v-on:click="disconnect">
                 DISCONNECT
             </button>
@@ -60,7 +66,12 @@
 
 <script>
 export default {
-    name: 'Main',
+    mounted () {
+        if (this.$route.query.remote) {
+            this.$parent.remoteID = this.$route.query.remote
+            this.connect()
+        }
+    },
     methods: {
         copyInviteLink () {
             let element = document.getElementById('invite-link-field')
