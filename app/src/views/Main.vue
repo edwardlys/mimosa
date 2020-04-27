@@ -69,7 +69,7 @@ export default {
     mounted () {
         if (this.$route.query.remote) {
             this.$parent.remoteID = this.$route.query.remote
-            this.connect()
+            this.$parent.$refs.n.show('invite link received, press connect to start')
         }
     },
     methods: {
