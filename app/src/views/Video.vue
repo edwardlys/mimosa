@@ -40,6 +40,11 @@
 <script>
 
 export default {
+    mounted () {
+        let video = document.getElementById('remote-video');
+        video.srcObject = this.$parent.remoteStream
+        video.play();
+    },
     methods: {
         start () {
             let self = this
@@ -95,6 +100,7 @@ export default {
             }
         },
         stream (remoteStream) {
+            this.$parent.remoteStream = remoteStream
             let video = document.getElementById('remote-video');
             video.srcObject = remoteStream
             video.play();

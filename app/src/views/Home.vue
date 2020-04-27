@@ -59,6 +59,7 @@ export default {
             dataConnection: null,
             mediaConnection: null,
             mediaConnectionRole: null,
+            remoteStream: null,
             messageLog: [],
             mediaStreamTracks: []
         }
@@ -130,6 +131,7 @@ export default {
                 this.mediaConnection = null
             }
 
+            this.remoteStream = null
             this.mediaConnectionRole = null
         },
         serverOpen () {
@@ -176,6 +178,10 @@ export default {
             if (this.$router.currentRoute.path != '/home/video') {
                 let el = document.getElementById('nav-video')
                 el.classList.add('blink')
+            }
+
+            if (this.mediaConnection) {
+                this.mediaConnection.close()
             }
 
             this.mediaConnection = mediaConnection

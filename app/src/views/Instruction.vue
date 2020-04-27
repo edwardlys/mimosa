@@ -24,7 +24,7 @@
             <ul>
                 <li>Consent is important</li>
                 <li>'Nuke Session' => destroy user id and all connections, not recoverable</li>
-                <li>'Nuke Server'  => not as bad as it sounds, just disconnect server, video may not work but texting is still possible</li>
+                <li>'Nuke Server'  => not as bad as it sounds, just disconnect server</li>
                 <li>When in doubt, nuke all</li>
             </ul>
             
