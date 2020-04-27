@@ -61,6 +61,7 @@ export default {
             mediaConnectionRole: null,
             remoteStream: null,
             messageLog: [],
+            totalMessage: 0,
             mediaStreamTracks: []
         }
     },
@@ -170,6 +171,7 @@ export default {
                 this.remoteUsername = payload.username
                 this.messageLog.push(payload)
                 this.pushNotification('Mimosa: New Message', payload.message, [100, 100])
+                this.totalMessage = this.messageLog.length
             } else {
                 this.$refs.n.show('Unidentified payload received')
             }

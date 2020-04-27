@@ -50,9 +50,9 @@ export default {
         }
     },
     mounted () {
-        window.scroll(0, 999999999)
         let element = document.getElementById("message-field");
         element.addEventListener("keyup", this.pressEnter);
+        this.scrollToBottom()
     },
     methods: {
         pressEnter (event) {
@@ -67,13 +67,14 @@ export default {
             if (textMsg != '') {
                 let payload = this.buildPayload(textMsg)
                 this.$parent.messageLog.push(payload)
+                this.$parent.totalMessage = this.$parent.messageLog.length
 
                 if (this.$parent.dataConnection.open) {
                     this.$parent.dataConnection.send(payload)
                 }
 
                 this.message = ''
-                window.scroll(0, 999999999)
+                this.scrollToBottom()
             }            
         },
         buildPayload (textMsg) {
@@ -84,6 +85,9 @@ export default {
                 userID:    this.$parent.peer.id,
                 timestamp: Date.now()
             }
+        },
+        scrollToBottom () {
+            window.scrollBy(0, document.querySelector('.message-log').offsetHeight)
         }
     }
 }
@@ -99,7 +103,7 @@ export default {
 .message-log {
     margin-top: 75px;
     min-height: 75px;
-    margin-bottom: 100px;
+    margin-bottom: 175px;
     border: 1px solid black;
     text-align: left;
 }
