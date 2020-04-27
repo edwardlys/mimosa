@@ -1,176 +1,149 @@
 <template>
-  <div>
-    <br>
-
-    <div class="container-lg">
-      <div class="row">
-        <div class="col">
-          <div class="card">
-            <div class="card-body">
-              <form class="container">
-                <div class="row">
-                  <div class="col-md form-group">
-                    <div class="input-group mb-3">
-                      <input type="text" class="form-control" id="uuid" v-model="UUID" readonly>
-                      <div class="input-group-append">
-                        <button class="btn btn-outline-secondary" type="button" v-on:click="copyUUID">Copy</button>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="col-md form-group">
-                      <input type="text" placeholder="Peer ID" class="form-control" id="peer-uuid" v-model="peerUUID" :disabled="lockPeer">
-                  </div>
-                </div>
-                <div class="row" v-if="!lockPeer">
-                  <button type="button" class="col btn btn-primary" :disabled="!peerUUID || lockPeer" v-on:click="connectPeer">Connect</button>
-                </div>
-                <div class="row">
-                  <div class="col">
-                    <h1 style="color: green" v-if="lockPeer">Connected!</h1>
-                  </div>
-                </div>
-              </form>
+    <div class="section">
+        <div class="message-log">
+            <div class="nothing-here-yet" v-if="$parent.messageLog.length == 0">
+                <i>nothing here yet</i>
             </div>
-          </div>
-
-          <br>
-
-          <div class="card">
-            <div class="card-body">
-              <form class="container">
-                <div class="row">
-                  <div class="col form-group">
-                    <div class="input-group mb-3">
-                      <textarea class="form-control" id="message" v-model="message" :disabled="!conn"></textarea>
-                      <div class="input-group-append">
-                        <button class="btn btn-outline-secondary" type="button" v-on:click="sendMessage" :disabled="!conn">Send</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </form>
-            </div>
-          </div>
-
-          <div class="card">
-            <div class="card-body">
-              <form class="container">
-                <div class="row">
-                  <div class="col form-group">
-                    <div class="input-group mb-3">
-                      <div>
-                        <div id="video-canvas" width="320" height="240">
-                          <video id="video-peer"></video>
-                          <video id="video-self"></video>
+            <div v-bind:key="m.timestamp" v-for="(m, i) in $parent.messageLog">
+                <div v-if="m.userID == $parent.peer.id">
+                    <div class="message-white">
+                        <div class="message-header" v-if="!$parent.messageLog[i - 1] || $parent.messageLog[i - 1].userID != m.userID">
+                            <small><i>{{ !!$parent.username? $parent.username: 'yourself' }}:</i></small>
                         </div>
-                      </div>
-                      <div class="input-group-append">
-                        <button class="btn btn-outline-secondary" type="button" v-on:click="callMedia" :disabled="!conn">Video Call</button>
-                      </div>
+                        <div>
+                            > {{ m.message.trim() }}
+                        </div>
+                        <div class="message-footer" v-if="!$parent.messageLog[i + 1] || $parent.messageLog[i + 1].userID != m.userID">
+                        </div>
                     </div>
-                  </div>
                 </div>
-              </form>
+                <div v-if="m.userID != $parent.peer.id">
+                    <div class="message-black">
+                        <div class="message-header" v-if="!$parent.messageLog[i - 1] || $parent.messageLog[i - 1].userID != m.userID">
+                            <small><i>{{ !!$parent.remoteUsername? $parent.remoteUsername: 'stranger' }}:</i></small>
+                        </div>
+                        <div>
+                            > {{ m.message.trim() }}
+                        </div>
+                        <div class="message-footer" v-if="!$parent.messageLog[i + 1] || $parent.messageLog[i + 1].userID != m.userID">
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
+        <div class="message-type-area">
+            <textarea 
+                id="message-field" 
+                v-model="message" 
+                :disabled="!$parent.dataConnection" 
+                placeholder="Type message here and hit Enter">
+            </textarea>
+        </div>
     </div>
-  </div>
 </template>
 
 <script>
 export default {
-  name: 'Home',
-  data () {
-    return {
-      UUID: null,
-      peerUUID: null,
-      conn: null,
-      connectionStatus: 0,
-      message: '',
-      lockPeer: false,
-      peerConf: {}
+    data () {
+        return {
+            message: '',
+        }
+    },
+    mounted () {
+        window.scroll(0, 999999999)
+        let element = document.getElementById("message-field");
+        element.addEventListener("keyup", this.pressEnter);
+    },
+    methods: {
+        pressEnter (event) {
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                this.send()
+            }
+        },
+        send () {
+            let textMsg = this.message.trim()
+            
+            if (textMsg != '') {
+                let payload = this.buildPayload(textMsg)
+                this.$parent.messageLog.push(payload)
+
+                if (this.$parent.dataConnection.open) {
+                    this.$parent.dataConnection.send(payload)
+                }
+
+                this.message = ''
+                window.scroll(0, 999999999)
+            }            
+        },
+        buildPayload (textMsg) {
+            return {
+                type:      'message',
+                message:   textMsg,
+                username:  this.$parent.username,
+                userID:    this.$parent.peer.id,
+                timestamp: Date.now()
+            }
+        }
     }
-  },
-  created () {
-    window.peer.on('open', this.onPeerOpen)
-    window.peer.on('connection', this.onPeerConn)
-
-    var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-    
-    window.peer.on('call', function(call) {
-      getUserMedia({video: true, audio: true}, function(stream) {
-        call.answer(stream); // Answer the call with an A/V stream.
-        call.on('stream', function(remoteStream) {
-          let video = document.getElementById('video-peer');
-          video.srcObject = remoteStream
-          video.play();
-        });
-      }, function(err) {
-        console.log('Failed to get local stream' ,err);
-      });
-    });
-  },
-  methods: {
-    onPeerOpen (id) {
-      this.UUID = id
-    },
-    onPeerConn (conn) {
-      this.conn = conn
-      this.conn.on('data', this.onConnReceiveData)
-    },
-    copyUUID () {
-      var UUIDInput = document.getElementById("uuid")
-
-      UUIDInput.select()
-      UUIDInput.setSelectionRange(0, 99999)
-
-      document.execCommand("copy")
-    },
-    pasteUUID () {
-      let self = this
-      let text = navigator.clipboard.readText()
-      text.then(function (item) {
-        self.peerUUID = item.trim()
-      })
-    },
-    connectPeer () {
-      this.conn = window.peer.connect(this.peerUUID)
-      this.conn.on('open', this.onConnOpen)
-      this.conn.on('data', this.onConnReceiveData)
-    },
-    onConnOpen () {
-      this.conn.send({secretUUID: this.UUID})
-      this.lockPeer = true
-    },
-    sendMessage () {
-      this.conn.send({string: this.message})
-      this.message = ''
-    },
-    onConnReceiveData (data) {
-      if ('secretUUID' in data) {
-        this.peerUUID = data.secretUUID
-        this.lockPeer = true
-      } else {
-        alert(data.string)
-      }
-    },
-    callMedia () {
-      let self = this
-      var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-      getUserMedia({video: true, audio: true}, function(stream) {
-        let call = window.peer.call(self.peerUUID, stream);
-        call.on('stream', function(remoteStream) {
-          let video = document.getElementById('video-self');
-          video.srcObject = remoteStream
-          video.play();
-        });
-      }, function(err) {
-        console.log('Failed to get local stream' ,err);
-      });
-    }
-  }
 }
 </script>
+
+<style scoped>
+.nothing-here-yet {
+    text-align: center;
+    margin: 10px;
+    color: grey;
+}
+
+.message-log {
+    margin-top: 75px;
+    min-height: 75px;
+    margin-bottom: 100px;
+    border: 1px solid black;
+    text-align: left;
+}
+
+.message-type-area {
+    margin-bottom: 75px;
+    background: white;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    left: 50%;
+    transform: translateX(-50%)
+}
+
+.message-type-area textarea {
+  width: 90%;
+  height: 90%;
+}
+
+.message-header {
+  padding-top: 20px;
+  padding-bottom: 15px;
+  text-align: center;
+}
+
+.message-footer {
+  padding-bottom: 15px;
+}
+
+.message-white {
+  background-color: white;
+  color: black;
+  padding-right: 15%;
+  padding-left: 15%;
+  padding-bottom: 5px;
+  overflow-wrap: break-word;
+}
+
+.message-black {
+  background-color: black;
+  color: white;
+  padding-right: 15%;
+  padding-left: 15%;
+  padding-bottom: 5px;
+  overflow-wrap: break-word;
+}
+</style>
