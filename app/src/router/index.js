@@ -5,34 +5,6 @@ Vue.use(VueRouter)
 
 const routes = [
     {
-        path: '',
-        alias: ['/home'],
-        name: 'Home',
-        component: () => import('../views/Home.vue'),
-        children: [
-            {
-                path: '',
-                name: 'Main',
-                component: () => import('../views/Main.vue')
-            },
-            {
-                path: 'text',
-                name: 'Text',
-                component: () => import('../views/Text.vue')
-            },
-            {
-                path: 'video',
-                name: 'Video',
-                component: () => import('../views/Video.vue')
-            },
-            {
-                path: 'instruction',
-                name: 'Instruction',
-                component: () => import('../views/Instruction.vue')
-            }
-        ]
-    },
-    {
         path: '*',
         name: 'Home',
         component: () => import('../views/Home.vue')
@@ -40,7 +12,7 @@ const routes = [
 ]
 
 const router = new VueRouter({
-  routes
+    routes
 })
 
 export default router
