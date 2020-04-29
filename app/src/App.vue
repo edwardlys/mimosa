@@ -10,6 +10,8 @@
 
 html, body {
     font-family: 'Roboto Mono', sans-serif;
+    padding: 0;
+    margin: 0;
 }
 
 #app {
@@ -17,5 +19,40 @@ html, body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
+}
+
+input {
+    font-family: 'Roboto Mono', sans-serif;
+    text-align: center;
+    background: none;
+    outline: 0;
+    border-width: 0 0 1px;
+    border-color: black;
+    color: black;
+    padding: 10px;
+    font-size: 16px;
+}
+
+button {
+    font-family: 'Roboto Mono', sans-serif;
+    text-align: center;
+    background: none;
+    outline: 0;
+    border: 1px solid black;
+    color: black;
+    padding: 10px;
+    font-size: 16px;
+}
+
+i.material-icons.md-16 {
+    font-size: 16px;
+}
+
+i.material-icons.md-48 {
+    font-size: 48px;
+}
+
+.item {
+    margin: 25px 0;
 }
 </style>
