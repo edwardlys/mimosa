@@ -55,4 +55,16 @@ i.material-icons.md-48 {
 .item {
     margin: 25px 0;
 }
+
+.bar {
+    background: black;
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    height: 50px;
+    color: white;
+    text-align: right;
+}
 </style>

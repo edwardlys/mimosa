@@ -32,18 +32,6 @@
 </template>
 
 <style scoped>
-.bar {
-    background: black;
-    position: fixed;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100%;
-    height: 50px;
-    color: white;
-    text-align: right;
-}
-
 .log {
     margin-top: 50px;
     margin-bottom: 100px;
