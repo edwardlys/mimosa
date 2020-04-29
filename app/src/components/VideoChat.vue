@@ -1,0 +1,15 @@
+<template>
+    <div>
+        <div>
+            <video></video>
+        </div>
+        <div>
+            <button>call</button>
+            <button>answer</button>
+            <button>end</button>
+        </div>
+        <div>
+            <button>fullscreen</button>
+        </div>
+    </div>
+</template>
