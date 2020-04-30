@@ -8,18 +8,22 @@
         </div>
         <div class="body">
             <div class="item">
-                <div><label for="user-id">User ID</label></div>
+                <div><label>Local ID</label></div>
                 <div>
-                    <input type="text" name="user-id" readonly>
+                    <input id="local-id-field" t
+                        ype="text" 
+                        v-model="$parent.peer.id" 
+                        v-on:click="copy" 
+                        readonly>
                 </div>
             </div>
             <div class="item">
-                <div><label for="user-id">Remote ID</label></div>
-                <div><input type="text"></div>
+                <div><label>Remote ID</label></div>
+                <input type="text" v-model="$parent.remoteID">
             </div>
             <div class="item">
-                <button>Connect</button>
-                <button><i class="material-icons md-16">share</i></button>
+                <button v-if="!$parent.dataConn" v-on:click="connectPeer">Connect</button>
+                <button v-if="$parent.dataConn" v-on:click="$parent.dataConn.close()">Disconnect</button>
             </div>
             <div class="item">
                 <a><u><i>How to use?</i></u></a>
@@ -27,6 +31,25 @@
         </div>
     </div>
 </template>
+
+<script>
+export default {
+    data () {
+        return {
+        }
+    },
+    methods: {
+        copy () {
+            let element = document.getElementById('local-id-field')
+            element.select()
+            document.execCommand('copy')
+        },
+        connectPeer () {
+            this.$parent.peerConnect(this.$parent.remoteID)
+        }
+    }
+}
+</script>
 
 <style scoped>
 .title {
