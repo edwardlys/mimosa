@@ -25,8 +25,10 @@
                 <input type="text" v-model="$parent.remoteID">
             </div>
             <div class="item">
-                <button v-if="!$parent.dataConn" v-on:click="connectPeer">Connect</button>
-                <button v-if="$parent.dataConn" v-on:click="$parent.dataConn.close()">Disconnect</button>
+                <button v-if="!$parent.dataConn || !$parent.dataConn.open" v-on:click="connectPeer" :disabled="!$parent.remoteID || $parent.dataConn && !$parent.dataConn.open">
+                    {{ $parent.dataConn && !$parent.dataConn.open? 'Connecting': 'Connect' }}
+                </button>
+                <button v-if="$parent.dataConn && $parent.dataConn.open" v-on:click="$parent.dataConn.close()">Disconnect</button>
             </div>
             <div class="item">
                 <a><u><i>How to use?</i></u></a>
@@ -52,15 +54,11 @@ export default {
 
 <style scoped>
 .title {
-    background: black;
-    color: white;
-    padding: 25px;
+    padding: 50px;
     height: 30%;
 }
 
 .body {
-    background: white;
-    color: black;
     padding: 25px;
     height: 70%;
 }

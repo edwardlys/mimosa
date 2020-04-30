@@ -19,7 +19,7 @@ export default {
        }
     },
     created () {
-        if (!this.peer) {
+        if (!this.peer && this.$router.currentRoute.path != '/') {
             this.$router.push('/')
         }
 
@@ -39,6 +39,7 @@ export default {
             .on('connection',   this.peerDataConn)
             .on('call',         this.peerMediaConn)
             .on('close',        this.peerDestroyed)
+            .on('error', this.peerError)
     },
     methods: {
         disconnectDataConn () {
@@ -66,10 +67,7 @@ export default {
                     .on('open', () => {
                         // this.$router.push('/chat')
                     })
-                    .on('close', () => {
-                        self.dataConn.close()
-                        self.dataConn = null
-                    })
+                    .on('close', this.dataConnClose)
                     .on('data', (payload) => {
                         if(payload.type == 'message') {
                             this.messageLog.push(payload)
@@ -80,11 +78,39 @@ export default {
         peerConnect () {
             this.peerDataConn(this.peer.connect(this.remoteID))
         },
+        dataConnClose () {
+            this.dataConn.close()
+            this.dataConn = null
+        },
         peerMediaConn (mediaConn) {
             this.dataConn = mediaConn
         },
         peerDestroyed () {
 
+        },
+        peerError (err) {
+            
+            switch(err.type) {
+            case 'browser-incompatible':
+                break;
+            case 'disconnected':
+            case 'unavailable-id':
+                break;
+            case 'network':
+            case 'server-error':
+                break;
+            case 'peer-unavailable':
+                break;
+            case 'socket-error':
+                break;
+            case 'socket-closed':
+                break;
+            case 'webrtc':
+                break;
+            default:
+            }
+
+            this.dataConnClose()
         }
     }
 }

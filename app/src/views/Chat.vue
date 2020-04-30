@@ -62,7 +62,7 @@ export default {
             return this.$parent.messageLog[index + 1] && this.$parent.messageLog[index + 1].id == this.$parent.messageLog[index].id? true: false
         },
         sendMessage () {
-            if (this.message.trim() != '') {
+            if (this.$parent.dataConn && this.$parent.open && this.message.trim() != '') {
                 let payload = {
                     type: 'message',
                     text: this.message.trim(),
@@ -72,9 +72,11 @@ export default {
 
                 this.$parent.messageLog.push(payload)
                 this.$parent.dataConn.send(payload)
-
-                this.message = ''
+            } else {
+                // notification
             }
+
+            this.message = ''
         },
         scrollToBottom () {
             this.$nextTick(() => {
@@ -87,7 +89,7 @@ export default {
 
 <style scoped>
 .log {
-    margin-top: 50px;
+    margin-top: 70px;
     margin-bottom: 100px;
 }
 
@@ -95,16 +97,6 @@ export default {
     padding-left: 15%;
     padding-right: 15%;
     text-align: justify;
-}
-
-.log .block.local {
-    background: white;
-    color: black;
-}
-
-.log .block.remote {
-    background: black;
-    color: white;
 }
 
 .log .block .header {
@@ -132,7 +124,7 @@ export default {
     left: 50%;
     transform: translateX(-50%);
     width: 100%;
-    background: white;
+    background: black;
 }
 
 .box textarea {
@@ -142,8 +134,8 @@ export default {
     background: none;
     outline: 0;
     border-width: 0 0 1px;
-    border-color: black;
-    color: black;
+    border-color: white;
+    color: white;
     padding: 10px;
     width: 90%;
 }

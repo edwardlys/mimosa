@@ -23,8 +23,7 @@
 
 <style scoped>
 .player {
-    margin-top: 50px;
-    background: grey;
+    margin-top: 100px;
 }
 
 video {
