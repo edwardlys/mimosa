@@ -4,32 +4,86 @@
             <i class="call-icon material-icons md-48">voice_chat</i>
         </div>
         <div class="log">
-            <div class="block white">
-                <div class="header">yourself:</div>
-                <div class="body">
-                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+            <div v-bind:key="index" v-for="(message, index) in $parent.messageLog">
+                <div :class="isRemoteBlock(message.id)">
+                    <div class="header" v-if="!hasPreviousBlock(index)">
+                        {{ isRemote(message.id)? 'stranger': 'yourself' }} :
+                    </div>
+                    <div class="body">
+                        {{ message.text }}
+                    </div>
+                    <div class="footer" v-if="!hasNextBlock(index)"></div>
                 </div>
-                <div class="body">
-                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-                </div>
-                <div class="body">
-                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-                </div>
-                <div class="footer"></div>
-            </div>
-            <div class="block black">
-                <div class="header">stranger:</div>
-                <div class="body">
-                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-                </div>
-                <div class="footer"></div>
             </div>
         </div>
         <div class="box">
-            <textarea placeholder="type here"></textarea>
+            <textarea id="message-field" v-model="message" placeholder="type here"></textarea>
         </div>
     </div>
 </template>
+
+<script>
+export default {
+    data () {
+        return {
+            messageLog: this.$parent.messageLog,
+            message: ''
+        }
+    },
+    watch: {
+        messageLog: function () {
+            console.log('test')
+            this.scrollToBottom()
+        }
+    },
+    mounted () {
+        let element = document.getElementById("message-field");
+        element.addEventListener("keyup", this.pressEnter);
+
+        this.scrollToBottom()
+    },
+    methods: {
+        pressEnter (event) {
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                this.sendMessage()
+            }
+        },
+        isRemoteBlock (id) {
+            return this.isRemote(id)? 'block remote': 'block lcoal'
+        },
+        isRemote (id) {
+            return this.$parent.peer.id != id? true: false
+        },
+        hasPreviousBlock(index) {
+            return this.$parent.messageLog[index - 1] && this.$parent.messageLog[index - 1].id == this.$parent.messageLog[index].id? true: false
+        },
+        hasNextBlock(index) {
+            return this.$parent.messageLog[index + 1] && this.$parent.messageLog[index + 1].id == this.$parent.messageLog[index].id? true: false
+        },
+        sendMessage () {
+            if (this.message.trim() != '') {
+                let payload = {
+                    type: 'message',
+                    text: this.message.trim(),
+                    id:   this.$parent.peer.id,
+                    timestamp: Date.now()
+                }
+
+                this.$parent.messageLog.push(payload)
+                this.$parent.dataConn.send(payload)
+
+                this.message = ''
+            }
+        },
+        scrollToBottom () {
+            this.$nextTick(() => {
+                window.scrollBy(0, document.querySelector('.log').offsetHeight)
+            })
+        }
+    }
+}
+</script>
 
 <style scoped>
 .log {
@@ -43,12 +97,12 @@
     text-align: justify;
 }
 
-.log .block.white {
+.log .block.local {
     background: white;
     color: black;
 }
 
-.log .block.black {
+.log .block.remote {
     background: black;
     color: white;
 }
@@ -63,6 +117,7 @@
 .log .block .body {
     padding-top: 10px;
     padding-bottom: 10px;
+    overflow-wrap: break-word;
 }
 
 .log .block .footer {

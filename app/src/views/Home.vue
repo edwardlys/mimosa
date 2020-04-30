@@ -11,13 +11,18 @@ import Peer from 'peerjs'
 export default {
     data () {
        return {
+           remoteID: '',
            peer: null,
            dataConn: null,
            mediaConn: null,
-           remoteID: '',
+           messageLog: []
        }
     },
     created () {
+        if (!this.peer) {
+            this.$router.push('/')
+        }
+
         let peerServerConfig = {
             host: process.env.VUE_APP_PEER_SERVER_HOST, 
             path: process.env.VUE_APP_PEER_SERVER_PATH,
@@ -37,16 +42,16 @@ export default {
     },
     methods: {
         disconnectDataConn () {
-            
+            // notification
         },
         disconnectMediaConn () {
-
+            // notification
         },
         serverOpen () {
-
+            // notification
         },
         serverDisconnected () {
-
+            // notification
         },
         peerDataConn (dataConn) {
             let self = this
@@ -65,7 +70,7 @@ export default {
                         self.dataConn.close()
                         self.dataConn = null
                     })
-                    .on('data', () => {
+                    .on('data', (payload) => {
                         if(payload.type == 'message') {
                             this.messageLog.push(payload)
                         }

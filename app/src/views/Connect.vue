@@ -1,5 +1,8 @@
 <template>
     <div class="connect">
+        <div class="bar">
+            <i class="call-icon material-icons md-48" v-on:click="$router.push('/chat')">chat</i>
+        </div>
         <div class="title">
             <div class="item">
                 <h1>MIMOSA</h1>
@@ -10,8 +13,8 @@
             <div class="item">
                 <div><label>Local ID</label></div>
                 <div>
-                    <input id="local-id-field" t
-                        ype="text" 
+                    <input id="local-id-field" 
+                        type="text" 
                         v-model="$parent.peer.id" 
                         v-on:click="copy" 
                         readonly>
@@ -34,10 +37,6 @@
 
 <script>
 export default {
-    data () {
-        return {
-        }
-    },
     methods: {
         copy () {
             let element = document.getElementById('local-id-field')
