@@ -10,8 +10,8 @@
                         <div class="message-header" v-if="!$parent.messageLog[i - 1] || $parent.messageLog[i - 1].userID != m.userID">
                             <small><i>{{ !!$parent.username? $parent.username: 'yourself' }}:</i></small>
                         </div>
-                        <div>
-                            > {{ m.message.trim() }}
+                        <div class="message-body">
+                            {{ m.message.trim() }}
                         </div>
                         <div class="message-footer" v-if="!$parent.messageLog[i + 1] || $parent.messageLog[i + 1].userID != m.userID">
                         </div>
@@ -22,8 +22,8 @@
                         <div class="message-header" v-if="!$parent.messageLog[i - 1] || $parent.messageLog[i - 1].userID != m.userID">
                             <small><i>{{ !!$parent.remoteUsername? $parent.remoteUsername: 'stranger' }}:</i></small>
                         </div>
-                        <div>
-                            > {{ m.message.trim() }}
+                        <div class="message-body">
+                            {{ m.message.trim() }}
                         </div>
                         <div class="message-footer" v-if="!$parent.messageLog[i + 1] || $parent.messageLog[i + 1].userID != m.userID">
                         </div>
@@ -125,6 +125,11 @@ export default {
     width: 100%;
     left: 50%;
     transform: translateX(-50%)
+}
+
+.message-body {
+    text-align: justify;
+    padding-top: 10px;
 }
 
 .message-type-area textarea {
