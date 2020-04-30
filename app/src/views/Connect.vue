@@ -1,8 +1,5 @@
 <template>
     <div class="connect">
-        <div class="bar">
-            <i class="call-icon material-icons md-48" v-on:click="$router.push('/chat')">chat</i>
-        </div>
         <div class="title">
             <div class="item">
                 <h1>MIMOSA</h1>
@@ -24,11 +21,14 @@
                 <div><label>Remote ID</label></div>
                 <input type="text" v-model="$parent.remoteID">
             </div>
-            <div class="item">
+            <div class="item" v-if="$parent.peer && !$parent.peer.disconnected">
                 <button v-if="!$parent.dataConn || !$parent.dataConn.open" v-on:click="connectPeer" :disabled="!$parent.remoteID || $parent.dataConn && !$parent.dataConn.open">
                     {{ $parent.dataConn && !$parent.dataConn.open? 'Connecting': 'Connect' }}
                 </button>
                 <button v-if="$parent.dataConn && $parent.dataConn.open" v-on:click="$parent.dataConn.close()">Disconnect</button>
+            </div>
+            <div class="item" v-if="!$parent.peer || $parent.peer.disconnected">
+                <button v-on:click="$parent.peer.reconnect()">Reconnect</button>
             </div>
             <div class="item">
                 <a><u><i>How to use?</i></u></a>

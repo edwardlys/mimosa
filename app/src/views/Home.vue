@@ -1,5 +1,10 @@
 <template>
     <div class="home">
+        <div class="bar">
+            <i class="call-icon material-icons md-48" v-on:click="$router.push('/chat')">chat</i>
+            <i class="call-icon material-icons md-48" v-on:click="$router.push('/call')">voice_chat</i>
+            <i class="call-icon material-icons md-48" v-on:click="$router.push('/')">settings</i>
+        </div>
         <router-view>
         </router-view>
     </div>
@@ -73,12 +78,11 @@ export default {
                     })
             }
         },
-        peerConnect () {
-            this.peerDataConn(this.peer.connect(this.remoteID))
-        },
         dataConnClose () {
-            this.dataConn.close()
-            this.dataConn = null
+            if (this.dataConn) {
+                this.dataConn.close()
+                this.dataConn = null
+            }
         },
         peerMediaConn (mediaConn) {
             this.dataConn = mediaConn
@@ -87,7 +91,6 @@ export default {
 
         },
         peerError (err) {
-            
             switch(err.type) {
             case 'browser-incompatible':
                 break;
@@ -96,6 +99,7 @@ export default {
                 break;
             case 'network':
             case 'server-error':
+
                 break;
             case 'peer-unavailable':
                 break;
@@ -109,6 +113,9 @@ export default {
             }
 
             this.dataConnClose()
+        },
+        peerConnect () {
+            this.peerDataConn(this.peer.connect(this.remoteID))
         }
     }
 }

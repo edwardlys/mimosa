@@ -9,8 +9,8 @@
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 
 html, body {
-    background: black;
-    color: white;
+    background: white;
+    color: black;
     font-family: 'Roboto Mono', sans-serif;
     padding: 0;
     margin: 0;
@@ -29,10 +29,11 @@ input {
     background: none;
     outline: 0;
     border-width: 0 0 1px;
-    border-color: white;
-    color: white;
+    border-color: black;
+    color: black;
     padding: 10px;
     font-size: 16px;
+    width: 50%;
 }
 
 button {
@@ -40,8 +41,8 @@ button {
     text-align: center;
     background: none;
     outline: 0;
-    border: 1px solid white;
-    color: white;
+    border: 1px solid black;
+    color: black;
     padding: 10px;
     font-size: 16px;
 }
@@ -49,22 +50,23 @@ button {
 button:click {
     border: 1px solid black;
     background-color: black;
-    color: white;
+    color: black;
 }
+
 button:active {
-    border: 1px solid black;
     background-color: black;
-    color: white;
+    color: black;
 }
+
 button.active {
-    border: 1px solid black;
     background-color:black;
-    color: white;
+    color: black;
 }
+
 button:focus{
-    outline:none;
     background: orange;
 }
+
 button:disabled,
 button[disabled]{
     border: 1px solid #999999;
@@ -84,15 +86,14 @@ i.material-icons.md-48 {
 }
 
 .bar {
-    background: black;
+    background: white;
     position: fixed;
     top: 0;
     left: 50%;
     transform: translateX(-50%);
     width: 95%;
     height: 50px;
-    color: white;
-    text-align: right;
+    color: black;
     padding: 10px;
 }
 </style>

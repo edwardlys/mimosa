@@ -1,8 +1,5 @@
 <template>
     <div class="chat">
-        <div class="bar">
-            <i class="call-icon material-icons md-48">voice_chat</i>
-        </div>
         <div class="log">
             <div v-bind:key="index" v-for="(message, index) in $parent.messageLog">
                 <div :class="isRemoteBlock(message.id)">
@@ -62,7 +59,7 @@ export default {
             return this.$parent.messageLog[index + 1] && this.$parent.messageLog[index + 1].id == this.$parent.messageLog[index].id? true: false
         },
         sendMessage () {
-            if (this.$parent.dataConn && this.$parent.open && this.message.trim() != '') {
+            if (this.$parent.dataConn && this.$parent.dataConn.open && this.message.trim() != '') {
                 let payload = {
                     type: 'message',
                     text: this.message.trim(),
@@ -124,7 +121,7 @@ export default {
     left: 50%;
     transform: translateX(-50%);
     width: 100%;
-    background: black;
+    background: white;
 }
 
 .box textarea {
@@ -134,9 +131,10 @@ export default {
     background: none;
     outline: 0;
     border-width: 0 0 1px;
-    border-color: white;
-    color: white;
+    border-color: black;
+    color: black;
     padding: 10px;
     width: 90%;
 }
+
 </style>

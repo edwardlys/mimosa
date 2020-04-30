@@ -1,8 +1,5 @@
 <template>
     <div>
-        <div class="bar">
-            <i class="call-icon material-icons md-48">chat</i>
-        </div>
         <div class="player">
             <video controls></video>
         </div>
