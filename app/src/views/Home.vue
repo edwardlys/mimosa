@@ -55,8 +55,6 @@ export default {
             // notification
         },
         peerDataConn (dataConn) {
-            let self = this
-
             if (this.dataConn != null) {
                 this.dataConn.close()
                 this.$refs.n.show('Rejected an attempt to connect')
