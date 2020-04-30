@@ -47,12 +47,19 @@ export default {
     data () {
         return {
             message: '',
+            messageLog: this.$parent.messageLog,
         }
     },
     mounted () {
         let element = document.getElementById("message-field");
         element.addEventListener("keyup", this.pressEnter);
+        
         this.scrollToBottom()
+    },
+    watch: {
+        messageLog: function () {
+            this.scrollToBottom()
+        }
     },
     methods: {
         pressEnter (event) {
@@ -87,7 +94,9 @@ export default {
             }
         },
         scrollToBottom () {
-            window.scrollBy(0, document.querySelector('.message-log').offsetHeight)
+            this.$nextTick(() => {
+                window.scrollBy(0, document.querySelector('.message-log').offsetHeight)
+            })
         }
     }
 }
